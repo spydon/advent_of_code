@@ -1,5 +1,3 @@
-import 'package:collection/collection.dart';
-
 extension ListExtension<T> on List<T> {
   List<T> takeLast(int i) {
     return sublist(length - i, length);
@@ -16,6 +14,8 @@ extension ListExtension<T> on List<T> {
     removeRange(0, i);
     return result;
   }
+
+  bool unique() => toSet().length == length;
 }
 
 void main() {
