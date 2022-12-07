@@ -39,11 +39,7 @@ int fillSize(Node n) {
 }
 
 List<int> sizes(Node n) {
-  final result = <int>[];
-  result.add(n.size!);
-  result.addAll(n.c.map((e) => sizes(e)).flattened);
-
-  return result;
+  return [n.size!, ...(n.c.map((e) => sizes(e)).flattened)];
 }
 
 int totalUnder(Node n) {
