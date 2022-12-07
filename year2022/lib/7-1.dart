@@ -54,33 +54,8 @@ int totalUnder(Node n) {
   return sum;
 }
 
-List<Node> content(List<String> s) {
-  final nodes = <Node>[];
-  s.forEachIndexed((i, l) {
-    if (l.startsWith('-')) {
-      nodes.add(Node.fromLine(l, nodes.last));
-      nodes.last.c.addAll(
-        content(s
-            .sublist(i + 1)
-            .takeWhile((v) => !v.startsWith('-'))
-            .map((l) => l.substring(2))
-            .toList()),
-      );
-    }
-  });
-  return nodes;
-}
-
 class Node {
   Node(this.isDir, this.name, {this.size, this.parent});
-
-  Node.fromLine(String l, Node? parent)
-      : this(
-          l.contains('(dir)'),
-          l.split('- ')[1].split(' ')[0],
-          size: int.tryParse(l.split('size=').last.replaceAll(')', '')),
-          parent: parent,
-        );
 
   factory Node.fromLs(
     String name,
@@ -118,5 +93,5 @@ class Node {
 
   @override
   String toString() =>
-      '$name $isDir $size\n' + c.map((e) => '  ${e.toString()}').join();
+      '$name $isDir $size\n${c.map((e) => '  ${e.toString()}').join()}';
 }
