@@ -14,15 +14,9 @@ void main() {
   for (var x = 1; x < input[x].length - 1; x++) {
     for (var y = 1; y < column(y, input).length - 1; y++) {
       final xAxis = input[x];
-      final xSplit = [
-        xAxis.take(y).toList(),
-        xAxis.takeLast(input[y].length - y - 1).toList()
-      ];
+      final xSplit = xAxis.splitAroundIndex(y);
       final yAxis = column(y, input);
-      final ySplit = [
-        yAxis.take(x).toList(),
-        yAxis.takeLast(input[x].length - x - 1).toList()
-      ];
+      final ySplit = yAxis.splitAroundIndex(x);
       final left = xSplit[0];
       final right = xSplit[1];
       final top = ySplit[0];

@@ -15,6 +15,14 @@ extension ListExtension<T> on List<T> {
     return result;
   }
 
+  List<List<T>> splitAroundIndex(int i) {
+    return [take(i).toList(), takeLast(length - i - 1).toList()];
+  }
+
+  List<List<T>> splitAt(int i) {
+    return [take(i).toList(), takeLast(length - i).toList()];
+  }
+
   bool unique() => toSet().length == length;
 }
 
@@ -23,5 +31,5 @@ void main() {
   final test = [1, 2, 3, 4];
   print(test.removeBack(2));
   print(test);
-  print([1, 2, 3, 4].removeFront(2));
+  print([1, 2, 3, 4].splitAroundIndex(2));
 }
