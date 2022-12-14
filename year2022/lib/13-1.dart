@@ -16,9 +16,21 @@ void main() {
   final correct = <int>[];
   var index = 1;
   for (final pair in pairs) {
-    if (pair[0].compareTo(pair[1]) == Tri.good) {
-      print('added $index');
-      correct.add(index);
+    final result = pair[0].compareTo(pair[1]);
+    if (result != Tri.bad) {
+      if (result == Tri.next) {
+        if (pair[0].toString() == pair[1].toString()) {
+          print('Lists are identical, that means they are not in order?');
+          exit(0);
+        } else {
+          print('Left side ran out of items, so inputs are in the right order');
+          print('Added $index');
+          correct.add(index);
+        }
+      } else {
+        print('Added $index');
+        correct.add(index);
+      }
     }
     index++;
   }
@@ -27,9 +39,9 @@ void main() {
 
 class Node {
   late final int? v;
-  final List<Node> l = [];
+  final List<Node> l;
 
-  Node(String input) {
+  Node(String input) : l = [] {
     v = int.tryParse(input);
     if (v != null) {
       return;
@@ -63,34 +75,46 @@ class Node {
     }
   }
 
-  Node.fromDigit(int d) {
+  Node.fromDigit(int d) : l = [] {
     v = null;
     l.add(Node(d.toString()));
   }
 
   Tri compareTo(Node n) {
+    print('Compare $this to $n');
     if (v != null && n.v != null) {
-      return v! < n.v! ? Tri.good : (v! == n.v! ? Tri.next : Tri.bad);
+      print('Value compare $this to $n');
+      if (v! == n.v!) {
+        return Tri.next;
+      } else {
+        return v! < n.v! ? Tri.good : Tri.bad;
+      }
     } else if (v != null) {
+      print('Mixed types; convert left to [$v] and retry comparison');
       return Node.fromDigit(v!).compareTo(n);
     } else if (n.v != null) {
+      print('Mixed types; convert right to [${n.v}] and retry comparison');
       return compareTo(Node.fromDigit(n.v!));
     } else {
       for (var x = 0; x < l.length; x++) {
         if (n.l.length <= x) {
+          print(
+            'Right side ran out of items, so inputs are not in the right order',
+          );
           return Tri.bad;
         } else {
+          print('List compare ${l[x]} to ${n.l[x]}');
           switch (l[x].compareTo(n.l[x])) {
             case Tri.good:
               return Tri.good;
             case Tri.next:
-              continue;
+              break;
             case Tri.bad:
               return Tri.bad;
           }
         }
       }
-      return Tri.good;
+      return Tri.next;
     }
   }
 
@@ -99,9 +123,7 @@ class Node {
     if (v != null) {
       return v.toString();
     } else {
-      return l
-          .map((n) => n.v != null ? '${n.v}' : '[${n.toString()}]')
-          .join(',');
+      return "[${l.map((n) => n.v != null ? '${n.v}' : n.toString()).join(',')}]";
     }
   }
 }
@@ -111,3 +133,7 @@ enum Tri {
   bad,
   next,
 }
+
+// 3525 Too low
+// 4513
+// 6499 Too high
