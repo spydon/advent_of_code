@@ -8,33 +8,18 @@ void main() {
       .replaceAll(r'^\n', '')
       .split('\n')
     ..removeWhere((e) => e.isEmpty);
-  final nodes = input.map(Node.new).toList();
-  final pairs = <List<Node>>[];
-  for (var i = 1; i < nodes.length; i += 2) {
-    pairs.add([nodes[i - 1], nodes[i]]);
-  }
-  final correct = <int>[];
-  var index = 1;
-  for (final pair in pairs) {
-    final result = pair[0].compareTo(pair[1]);
-    if (result != Tri.bad) {
-      if (result == Tri.next) {
-        if (pair[0].toString() == pair[1].toString()) {
-          print('Lists are identical, that means they are not in order?');
-          exit(0);
-        } else {
-          print('Left side ran out of items, so inputs are in the right order');
-          print('Added $index');
-          correct.add(index);
-        }
-      } else {
-        print('Added $index');
-        correct.add(index);
-      }
-    }
-    index++;
-  }
-  print(correct.sum);
+  final nodes = input.map(Node.new).toList()
+    ..addAll(
+      [Node('[[2]]'), Node('[[6]]')],
+    );
+  final sorted = nodes.sorted((a, b) => a.compareTo(b) == Tri.good ? -1 : 1);
+  final first = sorted.indexWhere(
+    (e) => e.l.length == 1 && e.l[0].l.length == 1 && e.l[0].l[0].v == 2,
+  );
+  final second = sorted.indexWhere(
+    (e) => e.l.length == 1 && e.l[0].l.length == 1 && e.l[0].l[0].v == 6,
+  );
+  print((first + 1) * (second + 1));
 }
 
 class Node {
