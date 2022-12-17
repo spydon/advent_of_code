@@ -1,6 +1,9 @@
 import 'dart:io';
+import 'dart:math';
 
 import 'package:collection_ext/all.dart';
+import 'package:collection/collection.dart';
+import 'package:directed_graph/directed_graph.dart';
 import 'package:year2022/common.dart';
 
 void main() {
@@ -37,7 +40,7 @@ void main() {
       ];
 
   final jets = File('17-1.txt').readAsStringSync().split('');
-  final result = <List<String>>[];
+  var result = <List<String>>[];
 
   bool canMove(Direction direction) {
     for (int y = result.length - 1; y >= 0; y--) {
@@ -98,31 +101,63 @@ void main() {
   }
 
   int j = 0;
-  for (int i = 0; i < 2022; i++) {
+  final shapeLength = BigInt.from(shapes.length);
+  var height = BigInt.zero;
+  for (BigInt i = BigInt.zero;
+      i < BigInt.from(1000000000000);
+      i += BigInt.one) {
+    if (i % BigInt.from(1000000000) == BigInt.zero) {
+      print('Passed ${i / BigInt.from(1000000000000)}');
+      print('Iteration: $i');
+    }
     result.addAll(newRows());
-    result.addAll(shapes[i % shapes.length]().reversed);
+    result.addAll(shapes[(i % shapeLength).toInt()]().reversed);
     bool settled = false;
 
     while (!settled) {
       final direction =
           jets[j % jets.length] == '<' ? Direction.left : Direction.right;
-      j++;
+      j = (j + 1) % jets.length;
       move(direction);
       settled = !move(Direction.down);
+    }
 
-      if (settled) {
-        for (int y = result.length - 1; y >= 0; y--) {
-          final row = result[y];
-          for (int x = 0; x < row.length; x++) {
-            if (row[x] == '@') {
-              result[y][x] = '#';
-            }
-          }
+    for (int y = result.length - 1; y >= 0; y--) {
+      final row = result[y];
+      for (int x = 0; x < row.length; x++) {
+        if (row[x] == '@') {
+          result[y][x] = '#';
         }
       }
     }
+
+    result.removeWhere((l) => l.all((c) => c == '.'));
+
+    final covered = List.generate(7, (_) => false);
+    int takeUntil = 0;
+    for (takeUntil; takeUntil < result.length; takeUntil++) {
+      int j = 0;
+      for (final char in result[result.length - takeUntil - 1]) {
+        if (char == '#') {
+          covered[j] = true;
+        }
+        j++;
+      }
+      if (covered.all((c) => c)) {
+        break;
+      }
+    }
+    if (covered.any((c) => c == false)) {
+      continue;
+    }
+    if (result.length > takeUntil + 50) {
+      height += BigInt.from(result.length - takeUntil - 50);
+      result = result.takeLast(takeUntil + 50);
+    }
   }
   print(result.length);
+  print(height);
+  print(height + BigInt.from(result.length));
 }
 
 enum Direction {
