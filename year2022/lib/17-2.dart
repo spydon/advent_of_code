@@ -7,64 +7,75 @@ import 'package:directed_graph/directed_graph.dart';
 import 'package:year2022/common.dart';
 
 void main() {
-  final shapes = [
-    () => [
-          ['.', '.', '@', '@', '@', '@', '.'],
-        ],
-    () => [
-          ['.', '.', '.', '@', '.', '.', '.'],
-          ['.', '.', '@', '@', '@', '.', '.'],
-          ['.', '.', '.', '@', '.', '.', '.']
-        ],
-    () => [
-          ['.', '.', '.', '.', '@', '.', '.'],
-          ['.', '.', '.', '.', '@', '.', '.'],
-          ['.', '.', '@', '@', '@', '.', '.']
-        ],
-    () => [
-          ['.', '.', '@', '.', '.', '.', '.'],
-          ['.', '.', '@', '.', '.', '.', '.'],
-          ['.', '.', '@', '.', '.', '.', '.'],
-          ['.', '.', '@', '.', '.', '.', '.']
-        ],
-    () => [
-          ['.', '.', '@', '@', '.', '.', '.'],
-          ['.', '.', '@', '@', '.', '.', '.'],
-        ],
+  const shapes = [
+    [
+      0x0011110,
+    ],
+    [
+      0x0001000,
+      0x0011100,
+      0x0001000,
+    ],
+    [
+      0x0011100,
+      0x0000100,
+      0x0000100,
+    ],
+    [
+      0x0010000,
+      0x0010000,
+      0x0010000,
+      0x0010000,
+    ],
+    [
+      0x0011000,
+      0x0011000,
+    ],
   ];
 
-  List<List<String>> newRows() => [
-        ['.', '.', '.', '.', '.', '.', '.'],
-        ['.', '.', '.', '.', '.', '.', '.'],
-        ['.', '.', '.', '.', '.', '.', '.'],
-      ];
+  const newRows = [
+    0x0000000,
+    0x0000000,
+    0x0000000,
+  ];
 
   final jets = File('17-1.txt').readAsStringSync().split('');
-  var result = <List<String>>[];
+  var result = <int>[];
+  final moving = <int>[];
+  const first = 0x1000000;
+  const last = 0x0000001;
 
   bool canMove(Direction direction) {
+    bool hasSeenBlock = false;
     for (int y = result.length - 1; y >= 0; y--) {
-      final row = result[y];
-      for (int x = 0; x < row.length; x++) {
-        if (row[x] == '@') {
-          switch (direction) {
-            case Direction.down:
-              if (y == 0 || result[y + direction.dy][x] == '#') {
-                return false;
-              }
-              break;
-            case Direction.left:
-              if (x == 0 || row[x + direction.dx] == '#') {
-                return false;
-              }
-              break;
-            case Direction.right:
-              if (x == row.length - 1 || row[x + direction.dx] == '#') {
-                return false;
-              }
-              break;
-          }
+      final movingRow = moving[y];
+      if (movingRow == 0) {
+        if (hasSeenBlock) {
+          break;
+        } else {
+          continue;
         }
+      } else {
+        hasSeenBlock = true;
+      }
+      switch (direction) {
+        case Direction.down:
+          if (y == 0 || (result[y + direction.dy] & movingRow) != 0) {
+            return false;
+          }
+          break;
+        case Direction.left:
+          final staticRow = result[y];
+          if (movingRow & first != 0 || staticRow & (movingRow << 4) != 0) {
+            return false;
+          }
+          break;
+        case Direction.right:
+          final staticRow = result[y];
+          if (movingRow & last != 0 || staticRow & (movingRow >> 4) != 0) {
+            return false;
+          }
+          break;
       }
     }
     return true;
@@ -73,47 +84,50 @@ void main() {
   bool move(Direction direction) {
     final movePossible = canMove(direction);
     if (movePossible) {
-      for (int y = 0; y < result.length; y++) {
-        final row = result[y];
-        bool reachedEnd = false;
-        int x = direction == Direction.right ? row.length - 1 : 0;
-        while (!reachedEnd) {
-          if (row[x] == '@') {
-            switch (direction) {
-              case Direction.down:
-                row[x] = '.';
-                result[y - 1][x] = '@';
-                break;
-              default:
-                row[x] = '.';
-                row[x + direction.dx] = '@';
-                break;
+      switch (direction) {
+        case Direction.down:
+          moving.removeAt(0);
+          moving.add(0);
+          break;
+        default:
+          for (int y = 0; y < moving.length; y++) {
+            final row = moving[y];
+            if (row == 0) {
+              continue;
             }
+            moving[y] = direction == Direction.left ? row << 4 : row >> 4;
           }
-          reachedEnd =
-              direction == Direction.right ? x == 0 : x == row.length - 1;
-          x += direction.dx * -1;
-          x += direction.dx == 0 ? 1 : 0;
-        }
       }
     }
     return movePossible;
   }
 
+  final startTime = DateTime.now();
   int j = 0;
-  final shapeLength = BigInt.from(shapes.length);
+  int shapeIndex = 0;
+  int printIndex = 0;
   var height = BigInt.zero;
-  for (BigInt i = BigInt.zero;
-      i < BigInt.from(1000000000000);
-      i += BigInt.one) {
-    if (i % BigInt.from(1000000000) == BigInt.zero) {
+  final max = BigInt.from(1000000000000);
+  //final max = BigInt.from(2022);
+  for (BigInt i = BigInt.zero; i < max; i += BigInt.one) {
+    if (printIndex == 100000000) {
+      printIndex = 0;
       print('Passed ${i / BigInt.from(1000000000000)}');
       print('Iteration: $i');
+      final time = DateTime.now().difference(startTime);
+      print('Running for: $time');
     }
-    result.addAll(newRows());
-    result.addAll(shapes[(i % shapeLength).toInt()]().reversed);
-    bool settled = false;
+    printIndex++;
 
+    result.addAll(newRows);
+    moving.clear();
+    moving.addAll(List.filled(result.length, 0));
+    final shape = shapes[shapeIndex];
+    shapeIndex = (shapeIndex + 1) % shapes.length;
+    result.addAll(List.filled(shape.length, 0));
+    moving.addAll(shape);
+
+    bool settled = false;
     while (!settled) {
       final direction =
           jets[j % jets.length] == '<' ? Direction.left : Direction.right;
@@ -122,39 +136,30 @@ void main() {
       settled = !move(Direction.down);
     }
 
-    for (int y = result.length - 1; y >= 0; y--) {
-      final row = result[y];
-      for (int x = 0; x < row.length; x++) {
-        if (row[x] == '@') {
-          result[y][x] = '#';
-        }
-      }
+    for (int i = 0; i < result.length; i++) {
+      result[i] = result[i] | moving[i];
     }
 
-    result.removeWhere((l) => l.all((c) => c == '.'));
+    result.removeWhere((l) => l == 0);
 
-    final covered = List.generate(7, (_) => false);
+    var covered = 0x0;
     int takeUntil = 0;
     for (takeUntil; takeUntil < result.length; takeUntil++) {
-      int j = 0;
-      for (final char in result[result.length - takeUntil - 1]) {
-        if (char == '#') {
-          covered[j] = true;
-        }
-        j++;
-      }
-      if (covered.all((c) => c)) {
+      covered |= result[result.length - takeUntil - 1];
+      if (covered == 0x1111111) {
         break;
       }
     }
-    if (covered.any((c) => c == false)) {
+    if (covered != 0x1111111) {
       continue;
     }
-    if (result.length > takeUntil + 50) {
-      height += BigInt.from(result.length - takeUntil - 50);
-      result = result.takeLast(takeUntil + 50);
+    if (result.length > takeUntil + 2) {
+      height += BigInt.from(result.length - takeUntil - 2);
+      result = result.takeLast(takeUntil + 2);
+      //result.removeRange(result.length - takeUntil - 50, result.length);
     }
   }
+  //result.reversed.forEach((l) => print(l.toRadixString(16).padLeft(7, '0')));
   print(result.length);
   print(height);
   print(height + BigInt.from(result.length));
