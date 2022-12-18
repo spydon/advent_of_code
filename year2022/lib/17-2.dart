@@ -1,5 +1,5 @@
 import 'dart:io';
-import 'dart:math';
+import 'dart:math' as math;
 
 import 'package:collection_ext/all.dart';
 import 'package:collection/collection.dart';
@@ -65,14 +65,12 @@ void main() {
           }
           break;
         case Direction.left:
-          final staticRow = result[y];
-          if (movingRow & first != 0 || staticRow & (movingRow << 4) != 0) {
+          if (movingRow & first != 0 || result[y] & (movingRow << 4) != 0) {
             return false;
           }
           break;
         case Direction.right:
-          final staticRow = result[y];
-          if (movingRow & last != 0 || staticRow & (movingRow >> 4) != 0) {
+          if (movingRow & last != 0 || result[y] & (movingRow >> 4) != 0) {
             return false;
           }
           break;
@@ -102,17 +100,18 @@ void main() {
     return movePossible;
   }
 
+  final states = <int, List<int>>{};
   final startTime = DateTime.now();
   int j = 0;
   int shapeIndex = 0;
   int printIndex = 0;
-  var height = BigInt.zero;
-  final max = BigInt.from(1000000000000);
-  //final max = BigInt.from(2022);
-  for (BigInt i = BigInt.zero; i < max; i += BigInt.one) {
-    if (printIndex == 100000000) {
+  var height = 0;
+  final max = 1000000000000;
+  //final max = 2022;
+  for (var i = 0; i < max; i++) {
+    if (printIndex == 10000000) {
       printIndex = 0;
-      print('Passed ${i / BigInt.from(1000000000000)}');
+      print('Passed ${i / 1000000000000}');
       print('Iteration: $i');
       final time = DateTime.now().difference(startTime);
       print('Running for: $time');
@@ -129,6 +128,17 @@ void main() {
 
     bool settled = false;
     while (!settled) {
+      //if (shapeIndex - 1 == j) {
+      //  //print('\nAFTER: $i\n');
+      //  final state = result.toList(growable: false);
+      //  final matching = states.where((k, v) =>
+      //      v.whereIndexed((i, p1) => p1 == state[i]).length == state.length);
+      //  if (matching.isNotEmpty) {
+      //    print(matching);
+      //  }
+
+      //  states[i];
+      //}
       final direction =
           jets[j % jets.length] == '<' ? Direction.left : Direction.right;
       j = (j + 1) % jets.length;
@@ -153,16 +163,15 @@ void main() {
     if (covered != 0x1111111) {
       continue;
     }
-    if (result.length > takeUntil + 2) {
-      height += BigInt.from(result.length - takeUntil - 2);
-      result = result.takeLast(takeUntil + 2);
-      //result.removeRange(result.length - takeUntil - 50, result.length);
+    if (result.length > takeUntil + 10) {
+      height += (result.length - takeUntil - 10);
+      result = result.takeLast(takeUntil + 10);
+      //result.removeRange(0, result.length - takeUntil - 10);
     }
   }
-  //result.reversed.forEach((l) => print(l.toRadixString(16).padLeft(7, '0')));
   print(result.length);
   print(height);
-  print(height + BigInt.from(result.length));
+  print(height + result.length);
 }
 
 enum Direction {
