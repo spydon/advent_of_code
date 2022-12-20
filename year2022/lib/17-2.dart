@@ -100,23 +100,16 @@ void main() {
     return movePossible;
   }
 
-  final states = <int, List<int>>{};
-  final startTime = DateTime.now();
   int j = 0;
   int shapeIndex = 0;
-  int printIndex = 0;
-  var height = 0;
-  final max = 1000000000000;
-  //final max = 2022;
+  final max = 20000;
+  int shapesInCycle = 0;
+  int shapesFlyingBy = 0;
+
   for (var i = 0; i < max; i++) {
-    if (printIndex == 10000000) {
-      printIndex = 0;
-      print('Passed ${i / 1000000000000}');
+    if (i % 1000 == 0) {
       print('Iteration: $i');
-      final time = DateTime.now().difference(startTime);
-      print('Running for: $time');
     }
-    printIndex++;
 
     result.addAll(newRows);
     moving.clear();
@@ -128,17 +121,6 @@ void main() {
 
     bool settled = false;
     while (!settled) {
-      //if (shapeIndex - 1 == j) {
-      //  //print('\nAFTER: $i\n');
-      //  final state = result.toList(growable: false);
-      //  final matching = states.where((k, v) =>
-      //      v.whereIndexed((i, p1) => p1 == state[i]).length == state.length);
-      //  if (matching.isNotEmpty) {
-      //    print(matching);
-      //  }
-
-      //  states[i];
-      //}
       final direction =
           jets[j % jets.length] == '<' ? Direction.left : Direction.right;
       j = (j + 1) % jets.length;
@@ -152,26 +134,64 @@ void main() {
 
     result.removeWhere((l) => l == 0);
 
-    var covered = 0x0;
-    int takeUntil = 0;
-    for (takeUntil; takeUntil < result.length; takeUntil++) {
-      covered |= result[result.length - takeUntil - 1];
-      if (covered == 0x1111111) {
-        break;
+    if (i >= 5000) {
+      final index = moving.indexWhere((l) => l != 0);
+      bool inRange = true;
+      if (index > 11000) {
+        for (int j = index; j < shape.length; j++) {
+          if (moving[j] == 0) {
+            inRange = false;
+          }
+        }
       }
-    }
-    if (covered != 0x1111111) {
-      continue;
-    }
-    if (result.length > takeUntil + 10) {
-      height += (result.length - takeUntil - 10);
-      result = result.takeLast(takeUntil + 10);
-      //result.removeRange(0, result.length - takeUntil - 10);
+      //final loopLength = 53;
+      final loopLength = 2711;
+      if (inRange && index >= 10000 && index <= 10000 + loopLength - 1) {
+        if (shapesInCycle == 0) {
+          print('Rocks before hit cycle: $i height: ${result.length}');
+        }
+        shapesInCycle++;
+        if (shapesInCycle == 630) {
+          print('Rocks for modulo: $i height: ${result.length}');
+        }
+      } else if (!inRange && index < 10000 + 15) {
+        shapesFlyingBy++;
+        print('Shapes flying by');
+      }
     }
   }
   print(result.length);
-  print(height);
-  print(height + result.length);
+  print('Shapes in cycle: $shapesInCycle');
+  print('Shapes flying by: $shapesFlyingBy');
+
+  // Find cycles
+  final bestWindow = <int>[];
+  final settled = result.sublist(10000, result.length - 2000);
+  var loopStart = 0;
+  bool loopFound = false;
+  for (int i = 20; i < settled.length / 2 && !loopFound; i++) {
+    if (i % 1000 == 0) {
+      print('Finding repetitions $i');
+    }
+    final start = settled.sublist(0, i + 1);
+    final possible =
+        settled.sublist(i + 1, settled.length - (settled.length - 2 * i) + 2);
+    for (int i = 0; i < start.length; i++) {
+      if (start[i] != possible[i]) {
+        break;
+      }
+      if (i == start.length - 1) {
+        print('Found loop!');
+        loopFound = true;
+        loopStart = i + 1;
+        bestWindow.addAll(start);
+      }
+    }
+  }
+  print(settled.sublist(0, 300));
+  print(bestWindow);
+  print(bestWindow.length);
+  print(loopStart);
 }
 
 enum Direction {
@@ -183,3 +203,5 @@ enum Direction {
   final int dx;
   final int dy;
 }
+
+//>>> ((1000000000000-6450-630)/1735)*2711+(10975-10002)+10000
