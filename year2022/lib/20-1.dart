@@ -20,10 +20,8 @@ void main() {
     input.insert(newPosition, line);
   }
   final zeroPosition = input.indexWhere((e) => e.value == 0);
-  final result = [
-    input[(zeroPosition + 1000) % input.length].value,
-    input[(zeroPosition + 2000) % input.length].value,
-    input[(zeroPosition + 3000) % input.length].value,
-  ];
+  final result = [1000, 2000, 3000].map(
+    (i) => input[(zeroPosition + i) % input.length].value,
+  );
   print(result.sum());
 }
