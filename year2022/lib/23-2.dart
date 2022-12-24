@@ -1,9 +1,7 @@
-import 'dart:collection';
 import 'dart:io';
 import 'dart:math';
 
 import 'package:collection/collection.dart';
-import 'package:collection_ext/all.dart';
 import 'package:year2022/common.dart';
 
 void main() {
@@ -51,19 +49,32 @@ void main() {
   }
 
   void printMap() {
-    final map =
-        List.generate(6, (_) => List.generate(5, (_) => '.').toList()).toList();
+    int? minX;
+    int? minY;
+    int? maxX;
+    int? maxY;
     for (final p in currentPositions) {
-      map[p.y][p.x] = '#';
+      minX = minX == null ? p.x : min(p.x, minX);
+      minY = minY == null ? p.y : min(p.y, minY);
+      maxX = maxX == null ? p.x : max(p.x, maxX);
+      maxY = maxY == null ? p.y : max(p.y, maxY);
     }
-    map.forEach(print);
+    final map = List.generate(
+      maxY! - minY! + 1,
+      (_) => List.generate(maxX! - minX! + 1, (_) => '.').toList(),
+    ).toList();
+    for (final p in currentPositions) {
+      map[p.y - minY][p.x - minX!] = '#';
+    }
+    map.forEach((l) => print(l.join()));
   }
 
   int i = 0;
   while (true) {
     i++;
-    print(i);
-    //printMap();
+    if (i % 100 == 0) {
+      print(i);
+    }
     for (final elf in elves) {
       if (!hasGoodPosition(elf)) {
         for (final direction in elf.directions) {
@@ -71,8 +82,8 @@ void main() {
             break;
           }
         }
-        elf.nextDirection();
       }
+      elf.nextDirection();
     }
 
     for (final elf1 in elves) {
@@ -96,7 +107,7 @@ void main() {
     lastPositions = currentPositions.toSet();
     currentPositions = positions();
     if (lastPositions.containsAll(currentPositions)) {
-      print(i);
+      print('Fooound $i');
       break;
     }
   }
@@ -167,3 +178,4 @@ enum Direction {
 
 // 795 - too low
 // 796 - too low
+// 797 - too low
