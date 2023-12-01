@@ -12,13 +12,10 @@ void main() {
   final input = File('1.txt')
       .readAsStringSync()
       .split('\n')
-      .mapIndexed(
-        (x, line) => line
-            .split('')
-            .mapIndexed(
-              (y, e) => e == '#' ? 'l' : null,
-            )
-            .toList(),
-      )
-      .toList();
+      .map((line) => line.replaceAll(RegExp(r'[A-Za-z]'), ''))
+      .where((element) => element.isNotEmpty)
+      .map((line) => int.parse(
+          '${line.substring(0, 1)}${line.substring(line.length - 1)}'))
+      .sum;
+  print(input);
 }
