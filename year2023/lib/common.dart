@@ -9,10 +9,18 @@ extension ListExtension<T> on List<T> {
     return result;
   }
 
-  List<T> removeFront(int i) {
-    final result = take(i).toList();
-    removeRange(0, i);
-    return result;
+  void removeFront(int i) {
+    if (i == 0) {
+      return;
+    }
+    toList().removeRange(0, i);
+  }
+
+  List<T> drop(int i) {
+    if (i == 0) {
+      return toList();
+    }
+    return toList()..removeRange(0, i);
   }
 
   List<List<T>> splitAroundIndex(int i) {
@@ -24,6 +32,10 @@ extension ListExtension<T> on List<T> {
   }
 
   bool unique() => toSet().length == length;
+}
+
+extension StringExtension on String {
+  bool isNumber() => int.tryParse(this) != null;
 }
 
 void main() {
