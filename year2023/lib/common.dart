@@ -9,6 +9,16 @@ extension ListExtension<T> on List<T> {
     return result;
   }
 
+  List<List<T>> splitAroundIndex(int i) {
+    return [take(i).toList(), takeLast(length - i - 1).toList()];
+  }
+
+  List<List<T>> splitAt(int i) {
+    return [take(i).toList(), takeLast(length - i).toList()];
+  }
+}
+
+extension IterableExtension<T> on Iterable<T> {
   void removeFront(int i) {
     if (i == 0) {
       return;
@@ -23,12 +33,23 @@ extension ListExtension<T> on List<T> {
     return toList()..removeRange(0, i);
   }
 
-  List<List<T>> splitAroundIndex(int i) {
-    return [take(i).toList(), takeLast(length - i - 1).toList()];
-  }
-
-  List<List<T>> splitAt(int i) {
-    return [take(i).toList(), takeLast(length - i).toList()];
+  List<List<T>> splitWhere(bool Function(T) check) {
+    final result = <List<T>>[];
+    final current = <T>[];
+    for (final l in this) {
+      if (check(l)) {
+        if (current.isNotEmpty) {
+          result.add(current.toList());
+        }
+        current.clear();
+      } else {
+        current.add(l);
+      }
+    }
+    if (current.isNotEmpty) {
+      result.add(current);
+    }
+    return result;
   }
 
   bool unique() => toSet().length == length;
@@ -39,9 +60,10 @@ extension StringExtension on String {
 }
 
 void main() {
-  print([1, 2, 3, 4].takeLast(2));
-  final test = [1, 2, 3, 4];
-  print(test.removeBack(2));
-  print(test);
-  print([1, 2, 3, 4].splitAroundIndex(2));
+  print([
+    ['asdf'],
+    [],
+    ['lol'],
+    ['a']
+  ].splitWhere((i) => i.isEmpty));
 }
