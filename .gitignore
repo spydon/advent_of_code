@@ -2,3 +2,4 @@
 **/*.iml
 **/*.lock
 **/.dart_tool/
+**/*.txt
