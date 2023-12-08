@@ -59,11 +59,36 @@ extension StringExtension on String {
   bool isNumber() => int.tryParse(this) != null;
 }
 
+int findGCD(int a, int b) {
+  while (b != 0) {
+    int remainder = a % b;
+    a = b;
+    b = remainder;
+  }
+  return a;
+}
+
+int findLCD(int a, int b) {
+  if (a == 0 || b == 0) {
+    return 0;
+  }
+  int gcd = findGCD(a, b);
+  return (a * b) ~/ gcd;
+}
+
+int findLCDList(List<int> numbers) {
+  if (numbers.isEmpty) {
+    return 0;
+  }
+
+  int lcd = numbers[0];
+  for (int i = 1; i < numbers.length; i++) {
+    lcd = (lcd * numbers[i]) ~/ findGCD(lcd, numbers[i]);
+  }
+
+  return lcd;
+}
+
 void main() {
-  print([
-    ['asdf'],
-    [],
-    ['lol'],
-    ['a']
-  ].splitWhere((i) => i.isEmpty));
+  // For manual tests
 }
