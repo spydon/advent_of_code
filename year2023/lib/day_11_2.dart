@@ -12,8 +12,8 @@ void main() {
   final input = File('11.txt')
       .readAsStringSync()
       .split('\n')
-      .map((l) => l.split('').toList())
       .where((element) => element.isNotEmpty)
+      .map((l) => l.split('').toList())
       .toList();
   final expanded = input.map((l) => l.toList()).toList();
 

@@ -1,3 +1,13 @@
+import 'dart:io';
+
+List<String> readInput(int day) {
+  return File('$day.txt')
+      .readAsStringSync()
+      .split('\n')
+      .where((element) => element.isNotEmpty)
+      .toList();
+}
+
 extension ListExtension<T> on List<T> {
   List<T> takeLast(int i) {
     return sublist(length - i, length);
