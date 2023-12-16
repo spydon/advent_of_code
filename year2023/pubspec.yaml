@@ -10,7 +10,7 @@ dependencies:
   directed_graph: ^0.3.7
   flutter:
     sdk: flutter
-
+  vector_math: any
 
 dev_dependencies:
   lints: ^2.0.0
