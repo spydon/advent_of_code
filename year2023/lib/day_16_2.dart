@@ -45,7 +45,7 @@ void followPath(
   Set<((int, int), (int, int))> result,
   List<void Function()> operations,
 ) {
-  final newPosition = position.add(direction);
+  final newPosition = position + direction;
   if (newPosition.x < 0 ||
       newPosition.y < 0 ||
       newPosition.x >= input[0].length ||
@@ -101,12 +101,4 @@ void followPath(
         return;
       }
   }
-}
-
-extension on (int, int) {
-  int get x => $1;
-
-  int get y => $2;
-
-  (int, int) add((int, int) other) => (x + other.x, y + other.y);
 }

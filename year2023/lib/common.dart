@@ -69,6 +69,20 @@ extension StringExtension on String {
   bool isNumber() => int.tryParse(this) != null;
 }
 
+extension CoordinateExtension on (int, int) {
+  int get x => $1;
+
+  int get y => $2;
+
+  (int, int) operator +((int, int) other) => (x + other.x, y + other.y);
+
+  (int, int) operator -((int, int) other) => (x - other.x, y - other.y);
+
+  (int, int) operator *((int, int) other) => (x * other.x, y * other.y);
+
+  (int, int) invert() => this * (-1, -1);
+}
+
 int findGCD(int a, int b) {
   while (b != 0) {
     int remainder = a % b;
