@@ -32,13 +32,11 @@ void main() {
   final maxLength = 3;
 
   void addToQueue((int, int) start, (int, int) excludeDirection) {
-    for (final direction in directions) {
-      if ({excludeDirection, excludeDirection * (-1, -1)}.contains(direction)) {
-        continue;
-      }
-      if (checked.contains((start, direction))) {
-        continue;
-      }
+    for (final direction in directions
+        .difference({excludeDirection, excludeDirection * (-1, -1)})) {
+      //if (checked.contains((start, direction))) {
+      //  continue;
+      //}
       final newStartPositions = List.generate(
         maxLength,
         (i) => (start + direction * (i + 1, i + 1), direction),
@@ -56,7 +54,8 @@ void main() {
     }
   }
 
-  addToQueue((0, 0), (0, 0));
+  addToQueue((0, 0), (1, 0));
+  addToQueue((0, 0), (0, 1));
   while (queue.isNotEmpty) {
     final current = queue.removeFirst();
     final position = current.$1;
@@ -69,17 +68,27 @@ void main() {
       results[position.y][position.x] = (sum: testSum, d: direction);
     }
   }
+  print('Queue done');
+  for (var y = 0; y < input.length; y++) {
+    print(results[y]
+        .map((e) => (e.d, e.sum == 9223372036854775807 ? -1 : e.sum))
+        .toList());
+  }
 
   final path = <(int, int)>[];
+  //var position = (0, 1);
+  //while (position.x < input[0].length && position.y < input.length) {
+  //  path.add(position);
+  //  final direction = results[position.y][position.x].d;
+  //  position += direction;
+  //}
   var position = (input[0].length - 1, input.length - 1);
-  while (position.x < input[0].length && position.y < input[0].length) {
+  while (position.x != 0 || position.y != 0) {
     path.add(position);
     final direction = results[position.y][position.x].d;
     position += direction.invert();
-    if (position == (0, 0)) {
-      break;
-    }
   }
+  print(path);
 
   //for (var i = 0; i < 3; i++) {
   //  for (var y = 0; y < input.length; y++) {
@@ -128,12 +137,33 @@ void main() {
     }
     stdout.writeln();
   }
+  for (var y = 0; y < input.length; y++) {
+    for (var x = 0; x < input[0].length; x++) {
+      final dir = results[y][x].d;
+      if (path.contains((x, y))) {
+        stdout.write('\x1B[33m${dirToChar(dir)}\x1B[0m');
+      } else {
+        stdout.write(dirToChar(dir));
+      }
+    }
+    stdout.writeln();
+  }
   // 1076 - Too high, 5162188
   final result = results[results.length - 1][results[0].length - 1];
   print(result.sum);
 }
 
-(int, List<(int, int)>) brute(
-    (int, int) from, (int, int) to, List<List<int>> input) {
-  return (0, []);
+String dirToChar((int, int) dir) {
+  switch (dir) {
+    case (1, 0):
+      return '>';
+    case (-1, 0):
+      return '<';
+    case (0, -1):
+      return '^';
+    case (0, 1):
+      return 'v';
+    default:
+      return 'X';
+  }
 }

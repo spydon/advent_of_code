@@ -6,6 +6,7 @@ import 'dart:math';
 
 import 'package:collection/collection.dart';
 import 'package:collection_ext/all.dart';
+import 'package:vector_math/vector_math_64.dart';
 import 'package:year2023/common.dart';
 
 void main() {
@@ -19,56 +20,29 @@ void main() {
     final direction = int.parse(e.substring(5));
     return (direction, steps);
   }).toList();
-  var position = (0, 0);
   final directions = {
-    0: (1, 0),
-    1: (0, 1),
-    2: (-1, 0),
-    3: (0, -1),
+    0: Vector2(1, 0),
+    1: Vector2(0, 1),
+    2: Vector2(-1, 0),
+    3: Vector2(0, -1),
   };
-  final map = <(int, int)>{position};
+  final position = Vector2.zero();
+  final points = <Vector2>[position];
+  var circumference = 0;
   for (final line in input) {
-    for (var i = 0; i < line.$2; i++) {
-      position += directions[line.$1]!;
-      map.add(position);
-    }
-  }
-  final edges = map.toList();
-  final fillers = <(int, int)>{};
-
-  var lastPosition = map.first;
-  for (var i = 1; i < edges.length; i++) {
-    final position = edges[i];
-    final nextPosition = edges[(i + 1) % edges.length];
-    for (final checkPosition in [lastPosition, nextPosition]) {
-      final right = ((checkPosition == lastPosition)
-              ? (position - checkPosition)
-              : checkPosition - position)
-          .turnRight();
-      var fillPosition = position + right;
-      while (!map.contains(fillPosition)) {
-        fillers.add(fillPosition);
-        fillPosition += right;
-      }
-    }
-    lastPosition = position;
+    position.add(directions[line.$1]! * line.$2.toDouble());
+    points.add(position.clone());
+    circumference += line.$2;
   }
 
-  final newFillers = fillers.toSet();
-
-  while (newFillers.isNotEmpty) {
-    for (final filler in newFillers.toList()) {
-      for (final direction in directions.values) {
-        final newFiller = filler + direction;
-        if (!fillers.contains(newFiller) && !map.contains(newFiller)) {
-          newFillers.add(newFiller);
-        }
-      }
-    }
-    fillers.addAll(newFillers);
-    newFillers.clear();
+  // Shoe-lace algorithm
+  final matrices = <Matrix2>[];
+  for (var i = 1; i <= points.length; i++) {
+    final p1 = points[i - 1];
+    final p2 = points[i % points.length];
+    matrices.add(Matrix2.columns(p1, p2));
   }
-  map.addAll(fillers);
+  final determinants = matrices.map((m) => m.determinant());
 
-  print(map.length);
+  print(determinants.sum / 2 + circumference / 2 + 1);
 }

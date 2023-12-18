@@ -7,10 +7,10 @@ environment:
 dependencies:
   collection: any
   collection_ext: any
-  directed_graph: ^0.3.7
+  directed_graph: ^0.4.0
   flutter:
     sdk: flutter
   vector_math: any
 
 dev_dependencies:
-  lints: ^2.0.0
+  lints: ^3.0.0
