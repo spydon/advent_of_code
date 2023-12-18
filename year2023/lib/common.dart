@@ -81,6 +81,10 @@ extension CoordinateExtension on (int, int) {
   (int, int) operator *((int, int) other) => (x * other.x, y * other.y);
 
   (int, int) invert() => this * (-1, -1);
+
+  (int, int) turnLeft() => (y, -x);
+
+  (int, int) turnRight() => (-y, x);
 }
 
 int findGCD(int a, int b) {
