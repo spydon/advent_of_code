@@ -9,6 +9,9 @@ import 'package:collection_ext/all.dart';
 import 'package:meta/meta.dart';
 import 'package:year2023/common.dart';
 
+int iteration = 0;
+Queue<void Function()> operations = Queue();
+
 void main() {
   final input = readInput(20);
   final modules = <String, Module>{};
@@ -26,7 +29,7 @@ void main() {
         modules[id] = Broadcaster(id, destinations, modules);
     }
   }
-  modules['rx'] = FlipFlop('rx', [], modules);
+  modules['rx'] = Conjunction('rx', [], modules);
   for (final m in modules.values) {
     m.init(
       modules.values
@@ -35,20 +38,22 @@ void main() {
           .toList(),
     );
   }
+  final finalModules = (modules['cn'] as Conjunction).memory.keys;
 
-  final runs = 1000;
-  var i = 1;
-  while (true) {
-    modules['broadcaster']!.run('', false);
-    if (i % 10000000 == 0) {
-      print('Running $i');
+  while (finalModules.any((e) => modules[e]!.history.isEmpty)) {
+    iteration++;
+    operations.add(() => modules['broadcaster']!.run('', false));
+    while (operations.isNotEmpty) {
+      operations.removeFirst()();
     }
-    if (!modules['rx']!.lastSignal) {
-      print(i);
-      break;
-    }
-    i++;
   }
+
+  final result = finalModules
+      .map((e) => modules[e]!.history.toList())
+      .toList()
+      .flattened
+      .fold(1, (sum, e) => sum * e);
+  print(result);
 }
 
 class Broadcaster extends Module {
@@ -56,7 +61,6 @@ class Broadcaster extends Module {
 
   @override
   void run(String fromName, bool isHigh) {
-    super.run(fromName, isHigh);
     sendResult(isHigh);
   }
 }
@@ -68,7 +72,6 @@ class FlipFlop extends Module {
 
   @override
   void run(String fromName, bool isHigh) {
-    super.run(fromName, isHigh);
     if (!isHigh) {
       state = !state;
       sendResult(state);
@@ -91,7 +94,6 @@ class Conjunction extends Module {
 
   @override
   void run(String fromName, bool isHigh) {
-    super.run(fromName, isHigh);
     memory[fromName] = isHigh;
     sendResult(!memory.values.all((e) => e));
   }
@@ -106,26 +108,18 @@ abstract class Module {
   final String name;
   final List<String> destinations;
   final Map<String, Module> modules;
-  bool lastSignal = true;
-
-  int lowPulses = 0;
-  int highPulses = 0;
+  final List<int> history = [];
 
   void init(List<String> incoming) {}
 
-  @mustCallSuper
-  void run(String fromName, bool isHigh) {
-    lastSignal = isHigh;
-  }
+  void run(String fromName, bool isHigh);
 
+  @mustCallSuper
   void sendResult(bool isHigh) {
+    if (isHigh) history.add(iteration);
+
     for (var d in destinations) {
-      if (isHigh) {
-        highPulses++;
-      } else {
-        lowPulses++;
-      }
-      modules[d]?.run(name, isHigh);
+      operations.add(() => modules[d]!.run(name, isHigh));
     }
   }
 }

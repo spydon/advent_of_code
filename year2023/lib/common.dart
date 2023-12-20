@@ -117,6 +117,22 @@ int findLCDList(List<int> numbers) {
   return lcd;
 }
 
+int calculateLCM(List<List<int>> numberSeries) {
+  int lcmOfTwoNumbers(int a, int b) {
+    return (a * b) ~/ findGCD(a, b);
+  }
+
+  int lcm = 1;
+
+  for (List<int> series in numberSeries) {
+    for (int number in series) {
+      lcm = lcmOfTwoNumbers(lcm, number);
+    }
+  }
+
+  return lcm;
+}
+
 void main() {
   // For manual tests
 }
