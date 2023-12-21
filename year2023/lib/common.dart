@@ -80,11 +80,15 @@ extension CoordinateExtension on (int, int) {
 
   (int, int) operator *((int, int) other) => (x * other.x, y * other.y);
 
+  (int, int) operator %((int, int) other) => (x % other.x, y % other.y);
+
   (int, int) invert() => this * (-1, -1);
 
   (int, int) turnLeft() => (y, -x);
 
   (int, int) turnRight() => (-y, x);
+
+  (int, int) normalize() => (x.sign, y.sign);
 }
 
 int findGCD(int a, int b) {
@@ -133,6 +137,4 @@ int calculateLCM(List<List<int>> numberSeries) {
   return lcm;
 }
 
-void main() {
-  // For manual tests
-}
+void main() {}
