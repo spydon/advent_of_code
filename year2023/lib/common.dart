@@ -115,6 +115,10 @@ extension Coordinate3DExtension on (int, int, int) {
   (int, int, int) normalize() => (x.sign, y.sign, z.sign);
 }
 
+extension MatrixExtensions<T> on List<List<T>> {
+  T get((int, int) coordinate) => this[coordinate.y][coordinate.x];
+}
+
 int findGCD(int a, int b) {
   while (b != 0) {
     int remainder = a % b;
