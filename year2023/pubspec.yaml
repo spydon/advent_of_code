@@ -12,6 +12,7 @@ dependencies:
     sdk: flutter
   meta: any
   vector_math: any
+  z3: ^0.1.0
 
 dev_dependencies:
   lints: ^3.0.0

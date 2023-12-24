@@ -89,6 +89,46 @@ extension CoordinateExtension on (int, int) {
   (int, int) turnRight() => (-y, x);
 
   (int, int) normalize() => (x.sign, y.sign);
+
+  int distanceToSquared((int, int) arg) {
+    final dx = x - arg.x;
+    final dy = y - arg.y;
+
+    return dx * dx + dy * dy;
+  }
+}
+
+extension CoordinateDoubleExtension on (double, double) {
+  double get x => $1;
+
+  double get y => $2;
+
+  (double, double) operator +((double, double) other) =>
+      (x + other.x, y + other.y);
+
+  (double, double) operator -((double, double) other) =>
+      (x - other.x, y - other.y);
+
+  (double, double) operator *((double, double) other) =>
+      (x * other.x, y * other.y);
+
+  (double, double) operator %((double, double) other) =>
+      (x % other.x, y % other.y);
+
+  (double, double) invert() => this * (-1, -1);
+
+  (double, double) turnLeft() => (y, -x);
+
+  (double, double) turnRight() => (-y, x);
+
+  (double, double) normalize() => (x.sign, y.sign);
+
+  double distanceToSquared((double, double) arg) {
+    final dx = x - arg.x;
+    final dy = y - arg.y;
+
+    return dx * dx + dy * dy;
+  }
 }
 
 extension Coordinate3DExtension on (int, int, int) {
