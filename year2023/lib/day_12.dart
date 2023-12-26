@@ -10,49 +10,51 @@ import 'package:year2023/common.dart';
 
 void main() {
   final input = readInput(12)
-      .map((line) => line.split(' ').map((l) => l.split('').toList()).toList())
-      .map(configurations2)
-      .sum;
-  print(input);
+      .map((line) => line.split(' ').map((l) => l.split('').toList()).toList());
+  final result = input.map(configurations).sum;
+  print(result);
+
+  final ranges = [(1, 1), (5, 5), (10, 12)];
+  //nextPosition((1, 1), (5, 5), ['.', '?', '?', '., ., ?, ?, ., ., ., ?, #, #, .]);
 }
 
-void moveRange(
-  int rangeId,
-  List<(int, int)> ranges,
-  List<String> map,
-  bool singleStep,
-) {
-  (int, int) initialRange = ranges[rangeId];
-  (int, int)? innerNext;
-  do {
-    void setNext() {
-      innerNext = nextPosition(
-        ranges[rangeId],
-        rangeId + 1 < ranges.length ? ranges[rangeId + 1] : null,
-        map,
-      );
-    }
+//void moveRange(
+//  int rangeId,
+//  List<(int, int)> ranges,
+//  List<String> map,
+//  bool singleStep,
+//) {
+//  (int, int) initialRange = ranges[rangeId];
+//  (int, int)? innerNext;
+//  do {
+//    void setNext() {
+//      innerNext = nextPosition(
+//        ranges[rangeId],
+//        rangeId + 1 < ranges.length ? ranges[rangeId + 1] : null,
+//        map,
+//      );
+//    }
+//
+//    final lastRange = innerNext;
+//    setNext();
+//    if (innerNext != null) {
+//      ranges[rangeId] = innerNext!;
+//      printPositions(ranges, map, 'new ');
+//    } else {
+//      if (rangeId + 1 < ranges.length && lastRange != null) {
+//        print('running single step');
+//        moveRange(rangeId + 1, ranges, map, true);
+//        setNext();
+//        moveRange(rangeId, ranges, map, true);
+//      }
+//    }
+//  } while (innerNext != null && !singleStep);
+//  if (!singleStep) {
+//    ranges[rangeId] = initialRange;
+//  }
+//}
 
-    final lastRange = innerNext;
-    setNext();
-    if (innerNext != null) {
-      ranges[rangeId] = innerNext!;
-      printPositions(ranges, map, 'new ');
-    } else {
-      if (rangeId + 1 < ranges.length && lastRange != null) {
-        print('running single step');
-        moveRange(rangeId + 1, ranges, map, true);
-        setNext();
-        moveRange(rangeId, ranges, map, true);
-      }
-    }
-  } while (innerNext != null && !singleStep);
-  if (!singleStep) {
-    ranges[rangeId] = initialRange;
-  }
-}
-
-int configurations2(List<List<String>> config) {
+int configurations(List<List<String>> config) {
   test.clear();
   final map = config[0];
   final records = config[1].map(int.tryParse).whereType<int>().toList();
@@ -61,20 +63,44 @@ int configurations2(List<List<String>> config) {
   print(starts);
   print(map);
   var ranges = starts.toList();
-  var previousRanges = ranges.toList();
+  final stack = Queue<List<(int, int)>>();
   printPositions(ranges, map, 'start');
+  stack.add(ranges.toList());
   for (int current = ranges.length - 1; current >= 0; current--) {
-    previousRanges = ranges.toList();
+    print('Outer: $current');
+    final outer = stack.last.toList();
     for (int inner = ranges.length - 1; inner > current; inner--) {
-      moveRange(inner, ranges, map, false);
+      print('Inner: $inner');
+      (int, int)? next;
+      do {
+        print('=====');
+        print(outer[inner]);
+        print(inner + 1 < ranges.length ? outer[inner + 1] : null);
+        print(map);
+        print('=====');
+        next = nextPosition(
+          outer[inner],
+          inner + 1 < ranges.length ? outer[inner + 1] : null,
+          map,
+        );
+        if (next != null) {
+          outer[inner] = next;
+          printPositions(outer, map, 'inner');
+        }
+      } while (next != null);
     }
-    final initialRange = ranges[current];
-    //if (ranges[current] != initialRange) {
-    //  //current++; // run same again since it can still move
-    //} else {
-    ranges = previousRanges;
-    //}
-    moveRange(current, ranges, map, true);
+    final nextStatic = nextPosition(
+      stack.last[current],
+      current + 1 < ranges.length ? ranges[current + 1] : null,
+      map,
+    );
+    printPositions(outer, map, 'outer');
+    if (nextStatic != null) {
+      break;
+    } else {
+      //final last = stack.removeLast();
+      //stack.add()
+    }
   }
   return test.length + 1;
 }
