@@ -1,0 +1,19 @@
+name: year2024
+version: 1.0.0
+
+environment:
+  sdk: '>=3.0.0 <4.0.0'
+
+dependencies:
+  collection: any
+  collection_ext: any
+  dijkstra: ^0.0.4
+  directed_graph: ^0.4.0
+  flutter:
+    sdk: flutter
+  meta: any
+  vector_math: any
+  z3: ^0.1.0
+
+dev_dependencies:
+  lints: ^4.0.0
