@@ -28,6 +28,30 @@ extension ListExtension<T> on List<T> {
   }
 }
 
+extension StringListExtension on List<String> {
+  List<String> rotate() {
+    if (isEmpty) {
+      return [];
+    }
+
+    // Get dimensions of original list
+    final numRows = length;
+    final numCols = first.length;
+
+    // Create new list with swapped dimensions
+    final rotatedList = List.generate(numCols, (i) => '');
+
+    // Populate rotated list
+    for (var i = 0; i < numRows; i++) {
+      for (var j = 0; j < numCols; j++) {
+        rotatedList[j] = rotatedList[j] + this[numRows - 1 - i][j];
+      }
+    }
+
+    return rotatedList;
+  }
+}
+
 extension IterableExtension<T> on Iterable<T> {
   void removeFront(int i) {
     if (i == 0) {
@@ -67,6 +91,7 @@ extension IterableExtension<T> on Iterable<T> {
 
 extension StringExtension on String {
   bool isNumber() => int.tryParse(this) != null;
+  String reversed() => split('').reversed.join('');
 }
 
 extension CoordinateExtension on (int, int) {
