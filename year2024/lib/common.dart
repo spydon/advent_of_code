@@ -182,6 +182,14 @@ extension Coordinate3DExtension on (int, int, int) {
 
 extension MatrixExtensions<T> on List<List<T>> {
   T get((int, int) coordinate) => this[coordinate.y][coordinate.x];
+
+  void printAll() {
+    var line = 1;
+    for (final l in this) {
+      print('$line ${l.join('')}');
+      line++;
+    }
+  }
 }
 
 int findGCD(int a, int b) {
