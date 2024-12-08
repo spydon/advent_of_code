@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:math';
 
 List<String> readInput(int day) {
   return File('inputs/$day.txt')
@@ -120,6 +121,13 @@ extension CoordinateExtension on (int, int) {
     final dy = y - arg.y;
 
     return dx * dx + dy * dy;
+  }
+
+  double distanceTo((int, int) arg) {
+    final dx = x - arg.x;
+    final dy = y - arg.y;
+
+    return sqrt(dx * dx + dy * dy);
   }
 }
 
