@@ -116,6 +116,16 @@ extension CoordinateExtension on (int, int) {
 
   (int, int) normalize() => (x.sign, y.sign);
 
+  (int, int) stepNorth() => (x, y - 1);
+  (int, int) stepEast() => (x + 1, y);
+  (int, int) stepSouth() => (x, y + 1);
+  (int, int) stepWest() => (x - 1, y);
+
+  bool isOutsideString(List<String> input) =>
+      x < 0 || y < 0 || x >= input[0].length || y >= input.length;
+  bool isOutside(List<List<dynamic>> input) =>
+      x < 0 || y < 0 || x >= input[0].length || y >= input.length;
+
   int distanceToSquared((int, int) arg) {
     final dx = x - arg.x;
     final dy = y - arg.y;
