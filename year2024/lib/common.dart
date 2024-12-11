@@ -53,6 +53,14 @@ extension StringListExtension on List<String> {
   }
 }
 
+extension MapExtension<K> on Map<K, int> {
+  /// Adds one to the key if it exists and otherwise creates the key and inserts
+  /// one.
+  void bump(K key, int value) {
+    this[key] = (this[key] ?? 0) + value;
+  }
+}
+
 extension IterableExtension<T> on Iterable<T> {
   void removeFront(int i) {
     if (i == 0) {
