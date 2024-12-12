@@ -27,6 +27,8 @@ extension ListExtension<T> on List<T> {
   List<List<T>> splitAt(int i) {
     return [take(i).toList(), takeLast(length - i).toList()];
   }
+
+  bool containsAll(Iterable other) => other.every(contains);
 }
 
 extension StringListExtension on List<String> {
@@ -102,6 +104,8 @@ extension StringExtension on String {
   bool isNumber() => int.tryParse(this) != null;
   String reversed() => split('').reversed.join('');
 }
+
+final directions = [(0, 1), (1, 0), (-1, 0), (0, -1)];
 
 extension CoordinateExtension on (int, int) {
   int get x => $1;
@@ -263,5 +267,3 @@ int calculateLCM(List<List<int>> numberSeries) {
 
   return lcm;
 }
-
-void main() {}
