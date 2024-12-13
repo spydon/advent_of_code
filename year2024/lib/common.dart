@@ -9,6 +9,10 @@ List<String> readInput(int day) {
       .toList();
 }
 
+List<String> readInputWithEmpty(int day) {
+  return File('inputs/$day.txt').readAsStringSync().split('\n').toList();
+}
+
 extension ListExtension<T> on List<T> {
   List<T> takeLast(int i) {
     return sublist(length - i, length);
@@ -120,6 +124,10 @@ extension CoordinateExtension on (int, int) {
 
   (int, int) operator %((int, int) other) => (x % other.x, y % other.y);
 
+  int operator ~/((int, int) other) => min(x ~/ other.x, y ~/ other.y);
+
+  (int, int) scale(int multiplier) => this * (multiplier, multiplier);
+
   (int, int) invert() => this * (-1, -1);
 
   (int, int) turnLeft() => (y, -x);
@@ -150,6 +158,14 @@ extension CoordinateExtension on (int, int) {
     final dy = y - arg.y;
 
     return sqrt(dx * dx + dy * dy);
+  }
+
+  double get length => distanceTo((0, 0));
+
+  bool isZero() => x == 0 && y == 0;
+
+  (int, int) gcd((int, int) other) {
+    return (findGCD(x, other.x), findGCD(y, other.y));
   }
 }
 
