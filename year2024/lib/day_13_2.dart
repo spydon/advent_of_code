@@ -11,12 +11,9 @@ import 'package:year2024/common.dart';
 void main() {
   final input = readInputWithEmpty(13).splitWhere((l) => l.isEmpty);
   final machines = input.map((i) => Machine.fromInput(i));
-  final result = machines.map((m) => m.run()).whereNotNull().sum;
-  print(machines.length);
+  final result = machines.map((m) => m.run()).sum;
   print(result);
 }
-
-var i = 1;
 
 class Machine {
   Machine({
@@ -44,42 +41,28 @@ class Machine {
     return Machine(
       aMovement: toTuple(input[0], '+'),
       bMovement: toTuple(input[1], '+'),
-      //goal: toTuple(input[2], '='),
       goal: toTuple(input[2], '=') + (10000000000000, 10000000000000),
     );
   }
 
-  int? run() {
-    print('Run: $i');
-    final gcd = aMovement.gcd(bMovement);
-    //if (i == 3) {
-    //  print('gcd of $aMovement and $bMovement is $gcd and goal is at $goal');
-    //  print('goal % gcd = ${goal % gcd}');
-    //}
-    i++;
-    final hasSolution = (goal % gcd).isZero();
-    print(hasSolution);
-    if (!hasSolution) {
-      return null;
+  int run() {
+    // Cramer's rule
+    // A*a_x + B*B_x = p_x
+    // A*a_y + B*b_y = p_y
+    //A = (p_x*b_y - prize_y*b_x) / (a_x*b_y - a_y*b_x)
+    //B = (a_x*p_y - a_y*p_x) / (a_x*b_y - a_y*b_x)
+    final determinant = (aMovement.x * bMovement.y - aMovement.y * bMovement.x);
+    final aPresses =
+        (goal.x * bMovement.y - goal.y * bMovement.x) / determinant;
+    final bPresses =
+        (aMovement.x * goal.y - aMovement.y * goal.x) / determinant;
+    if ((aMovement.scale(aPresses.round()) +
+            bMovement.scale(bPresses.round())) ==
+        goal) {
+      return (aPresses * aPrice + bPresses * bPrice).round();
+    } else {
+      return 0;
     }
-    final bSteps = goal ~/ bMovement;
-    // x * bMovement + y * aMovement = goal
-    // x * bPrice + y * aPrice = total
-    //return stupid(100, null);
-    return stupid(bSteps);
-  }
-
-  int? stupid(int startBPresses) {
-    for (var bPresses = startBPresses; bPresses >= 0; bPresses--) {
-      final bCurrent = bMovement.scale(bPresses);
-      final delta = goal - bCurrent;
-      final reachedPrize = (delta % aMovement).isZero();
-      if (reachedPrize) {
-        final aPresses = delta ~/ aMovement;
-        return aPresses * aPrice + bPresses * bPrice;
-      }
-    }
-    return null;
   }
 
   @override
