@@ -167,6 +167,23 @@ extension CoordinateExtension on (int, int) {
   (int, int) gcd((int, int) other) {
     return (findGCD(x, other.x), findGCD(y, other.y));
   }
+
+  void printDirection() {
+    if (y < 0) {
+      stdout.write('North');
+    } else if (y > 0) {
+      stdout.write('South');
+    }
+    if (x < 0) {
+      stdout.write('West');
+    } else if (x > 0) {
+      stdout.write('East');
+    }
+    if (isZero()) {
+      stdout.write('Zero');
+    }
+    stdout.writeln();
+  }
 }
 
 extension CoordinateDoubleExtension on (double, double) {
