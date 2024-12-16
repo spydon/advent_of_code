@@ -1,6 +1,15 @@
 import 'dart:io';
 import 'dart:math';
 
+const int maxInt = 0x7FFFFFFFFFFFFFFF;
+bool debugPrint = true;
+
+void dPrint(Object? s) {
+  if (debugPrint) {
+    print(s);
+  }
+}
+
 List<String> readInput(int day) {
   return File('inputs/$day.txt')
       .readAsStringSync()
@@ -169,6 +178,9 @@ extension CoordinateExtension on (int, int) {
   }
 
   void printDirection() {
+    if (!debugPrint) {
+      return;
+    }
     if (y < 0) {
       stdout.write('North');
     } else if (y > 0) {
