@@ -312,3 +312,42 @@ int calculateLCM(List<List<int>> numberSeries) {
 
   return lcm;
 }
+
+extension StreamExtension<T> on Stream<T> {
+  /// If [parallelism] is `null`, [Platform.numberOfProcessors] is used.
+  Stream<R> parallel<R>(
+    Future<R> Function(T) convert, {
+    int? parallelism,
+  }) async* {
+    final pending = <Future<R>>[];
+    final done = <Future<R>>[];
+
+    await for (final value in this) {
+      late final Future<R> future;
+      future = Future(() async {
+        try {
+          return await convert(value);
+        } finally {
+          pending.remove(future);
+          done.add(future);
+        }
+      });
+      pending.add(future);
+
+      if (pending.length < (parallelism ?? Platform.numberOfProcessors)) {
+        continue;
+      }
+
+      await Future.any(pending);
+
+      for (final future in done) {
+        yield await future;
+      }
+      done.clear();
+    }
+
+    for (final result in await Future.wait(pending)) {
+      yield result;
+    }
+  }
+}

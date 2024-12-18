@@ -5,6 +5,7 @@ environment:
   sdk: '>=3.0.0 <4.0.0'
 
 dependencies:
+  a_star_algorithm: ^0.3.2
   collection: any
   collection_ext: any
   dijkstra: ^0.0.4
