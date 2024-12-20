@@ -12,7 +12,9 @@ void main() {
   final size = (101, 103);
   final robots = readInput(14).map(Robot.fromLine).toList();
   // 5000 too low
-  robots.forEach((r) => r.step(size, steps: 5000));
+  for (var r in robots) {
+    r.step(size, steps: 5000);
+  }
   var i = 0;
   while (i < 2000) {
     final positions = robots.map((r) => r.position);

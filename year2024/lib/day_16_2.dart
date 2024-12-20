@@ -58,13 +58,11 @@ Node? findSubPaths(
     goalNodes.add(intersection);
     return null;
   }
-  intersection.children.addAll(
-    (directions.toList()..remove(direction.invert()))
-        .map(
-          (newDirection) => findSubPaths(intersection, newDirection, direction),
-        )
-        .whereNotNull(),
-  );
+  intersection.children.addAll((directions.toList()..remove(direction.invert()))
+      .map(
+        (newDirection) => findSubPaths(intersection, newDirection, direction),
+      )
+      .nonNulls);
   return intersection;
 }
 

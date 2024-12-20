@@ -166,7 +166,7 @@ class BoxNode {
           (p) =>
               map[p.y][p.x] == '.' ? null : BoxNode.fromMap(p, direction, map),
         )
-        .whereNotNull()
+        .nonNulls
         .toList();
 
     return BoxNode(p1, p2, children, null);

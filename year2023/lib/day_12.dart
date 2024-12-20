@@ -14,7 +14,6 @@ void main() {
   final result = input.map(configurations).sum;
   print(result);
 
-  final ranges = [(1, 1), (5, 5), (10, 12)];
   //nextPosition((1, 1), (5, 5), ['.', '?', '?', '., ., ?, ?, ., ., ., ?, #, #, .]);
 }
 

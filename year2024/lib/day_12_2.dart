@@ -164,7 +164,7 @@ List<(int, int)> perimeterToPolygon(
     while (true) {
       final hitWall = perimeter.contains(outsidePosition);
       final passedWall =
-          !perimeter.contains(outsidePosition - directionToOutside!);
+          !perimeter.contains(outsidePosition - directionToOutside);
       if (hitWall) {
         polygon.add(outsidePosition - direction);
         outsidePosition -= direction;

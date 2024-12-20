@@ -11,7 +11,7 @@ import 'package:year2024/common.dart';
 void main() {
   final input = readInputWithEmpty(13).splitWhere((l) => l.isEmpty);
   final machines = input.map((i) => Machine.fromInput(i));
-  final result = machines.map((m) => m.run()).whereNotNull().sum;
+  final result = machines.map((m) => m.run()).nonNulls.sum;
   print(result);
 }
 
