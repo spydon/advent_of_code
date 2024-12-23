@@ -6,6 +6,7 @@ environment:
 
 dependencies:
   a_star_algorithm: ^0.4.1
+  calc: ^0.2.1
   collection: any
   collection_ext: any
   dijkstra: ^0.0.4
