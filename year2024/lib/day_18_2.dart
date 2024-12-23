@@ -9,24 +9,24 @@ import 'package:a_star_algorithm/a_star_algorithm.dart';
 import 'package:collection/collection.dart';
 import 'package:collection_ext/all.dart';
 import 'package:year2024/common.dart';
-import 'package:flutter/material.dart';
 
 void main() async {
   final input = readInput(18).map((l) {
     final c = l.split(',').map(int.parse).toList();
-    return Point(c[0], c[1]);
+    return (c[0], c[1]);
   }).toList();
 
   final lastBarrier = await Stream.fromIterable(
     List.generate(input.length - 1024, (i) => i + 1024),
-  ).parallel<(int, Point<int>)?>(
+  ).parallel<(int, (int, int))?>(
     (i) async {
+      print('Doing $i');
       final barriers = input.sublist(0, i);
       final result = AStar(
         rows: 71,
         columns: 71,
-        start: Point(0, 0),
-        end: Point(70, 70),
+        start: (0, 0),
+        end: (70, 70),
         barriers: barriers,
         withDiagonal: false,
       ).findThePath();
@@ -38,7 +38,7 @@ void main() async {
       }
       return null;
     },
-  ).fold<(int, Point<int>)?>(
+  ).fold<(int, (int, int))?>(
     null,
     (best, next) {
       if (next == null) {

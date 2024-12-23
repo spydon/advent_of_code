@@ -2,19 +2,17 @@ name: year2024
 version: 1.0.0
 
 environment:
-  sdk: '>=3.0.0 <4.0.0'
+  sdk: '>=3.4.1 <4.0.0'
 
 dependencies:
-  a_star_algorithm: ^0.3.2
+  a_star_algorithm: ^0.4.1
   collection: any
   collection_ext: any
   dijkstra: ^0.0.4
-  directed_graph: ^0.4.0
-  flutter:
-    sdk: flutter
+  directed_graph: ^0.4.4
   meta: any
   vector_math: any
   z3: ^0.1.0
 
 dev_dependencies:
-  lints: ^4.0.0
+  flame_lint: 1.2.1
