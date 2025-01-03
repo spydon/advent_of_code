@@ -169,6 +169,10 @@ extension CoordinateExtension on (int, int) {
     return sqrt(dx * dx + dy * dy);
   }
 
+  int manhattanDistanceTo((int, int) arg) {
+    return (x - arg.x).abs() + (y - arg.y).abs();
+  }
+
   double get length => distanceTo((0, 0));
 
   bool isZero() => x == 0 && y == 0;
