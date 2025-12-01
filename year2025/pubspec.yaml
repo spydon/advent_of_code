@@ -1,0 +1,20 @@
+name: year2025
+publish_to: 'none'
+version: 1.0.0
+
+environment:
+  sdk: '>=3.10.1 <4.0.0'
+
+dependencies:
+  a_star_algorithm: ^0.4.1
+  calc: ^0.2.1
+  collection: any
+  collection_ext: any
+  dijkstra: ^0.0.4
+  directed_graph: ^0.5.0
+  meta: any
+  vector_math: any
+  z3: ^0.1.0
+
+dev_dependencies:
+  flame_lint: ^1.4.2
