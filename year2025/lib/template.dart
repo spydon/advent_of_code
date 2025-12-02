@@ -6,7 +6,7 @@ import 'dart:math';
 
 import 'package:collection/collection.dart';
 import 'package:collection_ext/all.dart';
-import 'package:year2024/common.dart';
+import 'package:year2025/common.dart';
 
 void main() {
   final input = readInput(100);
