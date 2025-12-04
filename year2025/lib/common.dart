@@ -119,6 +119,16 @@ extension StringExtension on String {
 }
 
 final directions = [(0, 1), (1, 0), (-1, 0), (0, -1)];
+final allDirections = [
+  (0, 1),
+  (1, 1),
+  (1, 0),
+  (1, -1),
+  (-1, 0),
+  (-1, -1),
+  (0, -1),
+  (-1, 1),
+];
 
 extension CoordinateExtension on (int, int) {
   int get x => $1;
