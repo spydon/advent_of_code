@@ -3,3 +3,6 @@ include: package:lints/recommended.yaml
 analyzer:
   exclude:
     - unusedimport
+
+formatter:
+  trailing_commas: preserve

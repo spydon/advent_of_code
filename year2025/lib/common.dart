@@ -279,6 +279,36 @@ extension MatrixExtensions<T> on List<List<T>> {
       line++;
     }
   }
+
+  List<List<T>> rotate() {
+    if (isEmpty) {
+      return [];
+    }
+    final numRows = length;
+    final numCols = first.length;
+    final rotatedList = List.generate(numCols, (i) => <T>[]);
+    for (var i = 0; i < numRows; i++) {
+      for (var j = 0; j < numCols; j++) {
+        rotatedList[j].add(this[numRows - 1 - i][j]);
+      }
+    }
+    return rotatedList;
+  }
+
+  List<List<T>> transpose() {
+    if (isEmpty) {
+      return [];
+    }
+    final numRows = length;
+    final numCols = first.length;
+    final transposedList = List.generate(numCols, (i) => <T>[]);
+    for (var i = 0; i < numRows; i++) {
+      for (var j = 0; j < numCols; j++) {
+        transposedList[j].add(this[i][j]);
+      }
+    }
+    return transposedList;
+  }
 }
 
 int findGCD(int a, int b) {
